@@ -47,8 +47,11 @@ If \code{equal.sample = TRUE} is used, \code{n2} would be ignored and N in outpu
 so you may see errors from it, notably about inability to bracket the root when invalid arguments are given.
 }
 \examples{
+# Calculate power, equal sizes
 power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, n1 = 2000, t1 = 2, t2 = 2)
+# Calculate sample size, equal sizes
 power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, t1 = 2, t2 = 2)
+# Calculate sample size for group 2, unequal sizes
 power_Poisson(n1 = 2000, lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, 
 t1 = 2, t2 = 2, equal.sample = FALSE)
 }

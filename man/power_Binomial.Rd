@@ -32,9 +32,8 @@ Compute power of test, or determine parameters to obtain target power for equal 
 }
 \details{
 Exactly one of the parameters \code{n1}, \code{n2}, \code{p1}, \code{p2}, \code{power}, and \code{sig.level} must be passed as NULL, and that parameter is determined from the others.
-Notice that \code{p1}, \code{p2}, \code{sig.level} have non-NULL defaults, so NULL must be explicitly passed if you want to compute them.\cr\cr
+Notice that \code{p1}, \code{p2}, \code{sig.level} have non-NULL defaults, so NULL must be explicitly expressed if you want to compute them.\cr\cr
 If \code{equal.sample = TRUE} is used, N in output will denote the number in each group.\cr\cr
-See \link[MESS]{power_prop_test} for more details.
 }
 \examples{
 # calculate power, equal sizes

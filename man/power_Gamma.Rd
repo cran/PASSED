@@ -46,6 +46,7 @@ If \code{equal.sample = TRUE} is used, N in output will denote the number in eac
 The equal shape parameter assumption will be tested automatically; otherwise it could be set manually with \code{equal.shape}.
 }
 \examples{
+# Calculate power, equal sizes
 power_Gamma(n1 = 50, mu1 = 1, mu2 = 1.5, gmu1 = 0.6, gmu2 = 0.6, M = 100)
 }
 \references{

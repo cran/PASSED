@@ -43,9 +43,8 @@ Compute power of t test, or determine parameters to obtain target power.
 }
 \details{
 Exactly one of the parameters \code{n1}, \code{n2}, \code{delta}, \code{sd1}, \code{sd2}, \code{power}, and \code{sig.level} must be passed as NULL, and that parameter is determined from the others.
-Notice that \code{sd1}, \code{sd2}, \code{sig.level} have non-NULL defaults, so NULL must be explicitly passed if you want to compute them.\cr\cr
+Notice that \code{sd1}, \code{sd2}, \code{sig.level} have non-NULL defaults, so NULL must be explicitly expressed if you want to compute them.\cr\cr
 If \code{equal.sample = TRUE} is used, N in output will denote the number in each group.\cr\cr
-See \link[MESS]{power_t_test} for more details.
 }
 \note{
 'uniroot' is used to solve power equation for unknowns, 

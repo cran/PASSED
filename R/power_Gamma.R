@@ -22,6 +22,7 @@
 #' @references Chang et al. (2011). Testing the equality of several gamma means: a parametric bootstrap method with applications. \emph{Computational Statistics}, \bold{26}:55-76.
 #' @return Object of class "power.htest", a list of the arguments (including the computed one) augmented with method element.
 #' @examples
+#' # Calculate power, equal sizes
 #' power_Gamma(n1 = 50, mu1 = 1, mu2 = 1.5, gmu1 = 0.6, gmu2 = 0.6, M = 100)
 #' @importFrom stats uniroot rgamma quantile
 #' @importFrom rootSolve multiroot

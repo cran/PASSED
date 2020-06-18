@@ -20,8 +20,11 @@
 #' @references Gu et al. (2008). Testing the ratio of two poisson rates. \emph{Biometrical Journal: Journal of Mathematical Methods in Biosciences}. \bold{50}:283-298.
 #' @return Object of class "power.htest", a list of the arguments (including the computed one) augmented with method element.
 #' @examples 
+#' # Calculate power, equal sizes
 #' power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, n1 = 2000, t1 = 2, t2 = 2)
+#' # Calculate sample size, equal sizes
 #' power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, t1 = 2, t2 = 2)
+#' # Calculate sample size for group 2, unequal sizes
 #' power_Poisson(n1 = 2000, lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, 
 #' t1 = 2, t2 = 2, equal.sample = FALSE)
 #' @note 'uniroot' is used to solve power equation for unknowns, 
