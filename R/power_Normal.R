@@ -24,9 +24,9 @@
 #' @examples 
 #' # Calculate power, equal sizes
 #' power_Normal(n1 = 150, delta = 5, sd1 = 20, sd2 = 10)
-#' # calculate power, unequal sizes
+#' # Calculate power, unequal sizes
 #' power_Normal(n1 = 150, delta = 5, n2 = 120, sd1 = 10)
-#' # calculate n1, equal sizes 
+#' # Calculate n1, equal sizes 
 #' power_Normal(delta = 5,  power = 0.9, sd1 = 10, sd2 = 12)
 #' @note 'uniroot' is used to solve power equation for unknowns, 
 #' so you may see errors from it, notably about inability to bracket the root when invalid arguments are given.
@@ -106,24 +106,26 @@ power_Normal <- function(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
                         classical = n1*(1+ratio)-2))
     qu <- -qt(sig.level/tside, nu)
     ncp <- delta/sd1 * switch(ttype, 
-                              sqrt(n1),
+                              sqrt(n1/2),
                               sqrt(n1/(1+(sd2/sd1)^2/ratio)))
-    -pt(qu, nu, ncp = ncp)
+    pt(qu, nu, ncp = ncp, lower.tail = FALSE)
   })
   ## if strict = TRUE
-  p.body <- quote({
-    nu <- switch(tside, 
-                 n1-1, 
-                 switch(df.method, 
-                        welch = (sd1^2/n1 + sd2^2/(n1*ratio))^2/((sd1^2/n1)^2/(n1-1) + (sd2^2/(n1*ratio))^2/(n1*ratio-1)),
-                        classical = n1*(1+ratio)-2))
-    qu <- -qt(sig.level/tside, nu)
-    ncp <- delta/sd1 * switch(ttype, 
-                              sqrt(n1),
-                              sqrt(n1/(1+(sd2/sd1)^2/ratio)))
-    pt(qu, nu, ncp = ncp, lower.tail = FALSE) + pt(-qu, nu, ncp = ncp, lower.tail = TRUE)
-  })
-  
+  if(strict == TRUE & tside == 2){
+    p.body <- quote({
+      nu <- switch(tside, 
+                   n1-1, 
+                   switch(df.method, 
+                          welch = (sd1^2/n1 + sd2^2/(n1*ratio))^2/((sd1^2/n1)^2/(n1-1) + (sd2^2/(n1*ratio))^2/(n1*ratio-1)),
+                          classical = n1*(1+ratio)-2))
+      qu <- -qt(sig.level/tside, nu)
+      ncp <- delta/sd1 * switch(ttype, 
+                                sqrt(n1/2),
+                                sqrt(n1/(1+(sd2/sd1)^2/ratio)))
+      pt(qu, nu, ncp = ncp, lower.tail = FALSE) + pt(-qu, nu, ncp = ncp, lower.tail = TRUE)
+    })
+  }
+
   # Calculate the outputs
   if(equal.sample){
     if(is.null(power))

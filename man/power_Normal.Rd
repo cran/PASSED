@@ -53,8 +53,8 @@ so you may see errors from it, notably about inability to bracket the root when 
 \examples{
 # Calculate power, equal sizes
 power_Normal(n1 = 150, delta = 5, sd1 = 20, sd2 = 10)
-# calculate power, unequal sizes
+# Calculate power, unequal sizes
 power_Normal(n1 = 150, delta = 5, n2 = 120, sd1 = 10)
-# calculate n1, equal sizes 
+# Calculate n1, equal sizes 
 power_Normal(delta = 5,  power = 0.9, sd1 = 10, sd2 = 12)
 }
