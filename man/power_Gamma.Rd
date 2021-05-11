@@ -4,18 +4,14 @@
 \alias{power_Gamma}
 \title{Power Calculations for Test of Two Gamma Means}
 \usage{
-power_Gamma(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05, 
-mu1 = NULL, mu2 = NULL, gmu1 = NULL, gmu2 = NULL,
+power_Gamma(n1 = NULL, n2 = NULL, mu1 = NULL, mu2 = NULL, 
+gmu1 = NULL, gmu2 = NULL, sig.level = 0.05, power = NULL, 
 trials = 100, M = 10000, equal.sample = TRUE, equal.shape = NULL)
 }
 \arguments{
 \item{n1}{sample size in group 1, or sample size in each group if equal.sample = TRUE}
 
 \item{n2}{sample size in group 2}
-
-\item{power}{power of test (1 minus Type II error probability)}
-
-\item{sig.level}{significance level (Type I error probability)}
 
 \item{mu1}{arithmetic mean of group 1}
 
@@ -24,6 +20,10 @@ trials = 100, M = 10000, equal.sample = TRUE, equal.shape = NULL)
 \item{gmu1}{geometric mean of group 1}
 
 \item{gmu2}{geometric mean of group 2}
+
+\item{sig.level}{significance level (Type I error probability)}
+
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{trials}{number of trials in simulation}
 

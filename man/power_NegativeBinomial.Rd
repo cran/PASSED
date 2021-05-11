@@ -4,22 +4,23 @@
 \alias{power_NegativeBinomial}
 \title{Power Calculation for Comparing Two Negative Binomial Rates}
 \usage{
-power_NegativeBinomial(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
-mu1 = NULL, mu2 = NULL, duration = 1, theta = NULL, equal.sample = TRUE, 
-alternative = c("two.sided", "one.sided"), approach = 3)
+power_NegativeBinomial(n1 = NULL, n2 = NULL, mu1 = NULL, mu2 = NULL, 
+sig.level = 0.05, power = NULL, duration = 1, theta = NULL,
+equal.sample = TRUE, alternative = c("two.sided", "one.sided"),
+approach = 3)
 }
 \arguments{
 \item{n1}{sample size in group 1, or sample size in each group if \code{equal.sample = TRUE}}
 
 \item{n2}{sample size in group 2}
 
-\item{power}{power of test (1 minus Type II error probability)}
-
-\item{sig.level}{significance level (Type I error probability)}
-
 \item{mu1}{expected rate of events per time unit for group 1}
 
 \item{mu2}{expected rate of events per time unit for group 2}
+
+\item{sig.level}{significance level (Type I error probability)}
+
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{duration}{(average) treatment duration}
 
@@ -29,7 +30,7 @@ alternative = c("two.sided", "one.sided"), approach = 3)
 
 \item{alternative}{one- or two-sided test}
 
-\item{approach}{1, 2, or 3; see Zhu and Lakkis (2014).}
+\item{approach}{1, 2, or 3, see details}
 }
 \value{
 Object of class "power.htest", a list of the arguments (including the computed one) augmented with note and method elements.
@@ -40,7 +41,10 @@ Compute sample size or power for comparing two negative binomial rates.
 \details{
 Exactly one of the parameters \code{n1}, \code{n2}, and \code{power} must be passed as NULL, and that parameter is determined from the others.\cr\cr
 If \code{equal.sample = TRUE} is used, N in output will denote the number in each group.\cr\cr
-The computations are based on the formulas given in Zhu and Lakkis (2014). See \link[MKmisc]{power.nb.test} for more details.
+The computations are based on the formulas given in Zhu and Lakkis (2014). 
+For approach 1, the events rates under null hypothesis are set as mu1 for both group 1 and group 2.
+For approach 2, the events rates under null hypothesis are set as mu1 and mu2 for group 1 and group 2, respectively.
+For approach 3, the events rates under null hypothesis are set as the maximum likelihood estimation of the overall events rate for both group 1 and group 2.
 }
 \examples{
 # calculate power, equal sizes
@@ -48,7 +52,7 @@ power_NegativeBinomial(n1 = 20, mu1 = 1, mu2 = 2, theta = 0.8)
 # calculate power, unequal sizes
 power_NegativeBinomial(n1 = 80, n2 = 40, mu1 = 1, mu2 = 2, theta = 0.8)
 # calculate n
-power_NegativeBinomial( mu1 = 1, mu2 = 2, theta = 0.8, power = 0.8)
+power_NegativeBinomial(mu1 = 1, mu2 = 2, theta = 0.8, power = 0.8)
 }
 \references{
 H. Zhu and H. Lakkis (2014). Sample size calculation for comparing two negative binomial rates. \emph{Statistics in Medicine}, \bold{33}:376-387.
