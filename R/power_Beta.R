@@ -10,8 +10,8 @@
 #' link.type = c("logit", "probit", "cloglog", "cauchit", "log", "loglog")) 
 #' @param n1 sample size in group 1, or sample size in each group if \code{equal.sample = TRUE}
 #' @param n2 sample size in group 2
-#' @param mu1 sample mean of group 1
-#' @param mu2 sample mean of group 2
+#' @param mu1 mean of group 1
+#' @param mu2 mean of group 2
 #' @param sd1 standard deviation for group 1
 #' @param sd2 standard deviation for group 2. Only applicable when \code{equal.precision = FALSE}
 #' @param sig.level significance level (Type I error probability)

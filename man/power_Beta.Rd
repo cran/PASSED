@@ -14,9 +14,9 @@ link.type = c("logit", "probit", "cloglog", "cauchit", "log", "loglog"))
 
 \item{n2}{sample size in group 2}
 
-\item{mu1}{sample mean of group 1}
+\item{mu1}{mean of group 1}
 
-\item{mu2}{sample mean of group 2}
+\item{mu2}{mean of group 2}
 
 \item{sd1}{standard deviation for group 1}
 

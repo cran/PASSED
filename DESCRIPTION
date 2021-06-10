@@ -1,7 +1,7 @@
 Package: PASSED
 Title: Calculate Power and Sample Size for Two Sample Mean Tests
-Version: 1.1-0
-Date: 2021-05-11
+Version: 1.1-1
+Date: 2021-06-10
 Authors@R: c(person("Jinpu", "Li", email = "lijinp@health.missouri.edu", role = c("aut", "cre")),
 	person("Ryan", "Knigge", email = "knigg008@umn.edu", role = "aut"),
 	person("Kaiyi", "Chen", email = "kcvpc@mail.missouri.edu", role = "aut"),
@@ -20,11 +20,11 @@ RoxygenNote: 7.1.1
 Imports: betareg, stats, rootSolve
 Suggests: knitr, rmarkdown, MKmisc
 NeedsCompilation: no
-Packaged: 2021-05-11 15:41:11 UTC; Castle
+Packaged: 2021-06-10 13:12:03 UTC; Castle
 Author: Jinpu Li [aut, cre],
   Ryan Knigge [aut],
   Kaiyi Chen [aut],
   Emily Leary [aut]
 Maintainer: Jinpu Li <lijinp@health.missouri.edu>
 Repository: CRAN
-Date/Publication: 2021-05-11 16:02:11 UTC
+Date/Publication: 2021-06-10 13:50:02 UTC

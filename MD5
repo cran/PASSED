@@ -1,13 +1,13 @@
-3ede7c341d4ec503fdd2a0e9b7d629af *DESCRIPTION
+28438a59675170482761c264dfd0de03 *DESCRIPTION
 211a2ad8729aeac5a267fd6ae27d143a *NAMESPACE
-6bb796293452e6dcba889ea8cfa74e6d *R/power_Beta.R
+a2b60810b57bdd694bbc2e92d737dd4a *R/power_Beta.R
 dab0a6e152ad6c89f45b6b587dbd0d65 *R/power_Binomial.R
 d3c8d60f8c32111643e4ea54f6b7b8db *R/power_Gamma.R
 0ec137426d209812ee454c9b9e05449c *R/power_Geometric.R
 62fdc27775740df17fe5bc3156e7b738 *R/power_NegativeBinomial.R
 6815ff773804a0ca8996bfd5aead287c *R/power_Normal.R
 4d0ebdd5cb3f43ce81a50b31f6573dae *R/power_Poisson.R
-294c15e30ccca90770f58903d6cc6e99 *man/power_Beta.Rd
+752a4c5475f66ddd47611c5435d6f7b5 *man/power_Beta.Rd
 a8d38436149ff6a7a14f4bc0208bc858 *man/power_Binomial.Rd
 89804c690507e09f32bf02bb91c20a70 *man/power_Gamma.Rd
 ae18f046e27895be1fc77f1137c90974 *man/power_Geometric.Rd
