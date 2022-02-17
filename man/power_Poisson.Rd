@@ -4,8 +4,8 @@
 \alias{power_Poisson}
 \title{Power Calculations for Test of Two Poisson Ratios}
 \usage{
-power_Poisson(n1 = NULL, n2 = NULL, lambda1 = NULL, lambda2 = NULL, 
-sig.level = 0.05, power = NULL, t1 = 1, t2 = 1, RR0 = 1,
+power_Poisson(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
+lambda1 = NULL, lambda2 = NULL, t1 = 1, t2 = 1, RR0 = 1,
 equal.sample = TRUE, alternative = c("two.sided", "one.sided"))
 }
 \arguments{
@@ -13,13 +13,13 @@ equal.sample = TRUE, alternative = c("two.sided", "one.sided"))
 
 \item{n2}{sample size in group 2}
 
-\item{lambda1}{Poisson rate for group 1}
-
-\item{lambda2}{Poisson rate for group 2}
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{sig.level}{significance level (Type I error probability)}
 
-\item{power}{power of test (1 minus Type II error probability)}
+\item{lambda1}{Poisson rate for group 1}
+
+\item{lambda2}{Poisson rate for group 2}
 
 \item{t1}{observed time period for group 1}
 
@@ -43,7 +43,7 @@ Notice that \code{sig.level} has non-NULL defaults, so NULL must be explicitly p
 If \code{equal.sample = TRUE} is used, \code{n2} would be ignored and N in output denotes the number in each group.
 }
 \note{
-'uniroot' is used to solve power equation for unknowns,
+'uniroot' is used to solve power equation for unknowns, 
 so you may see errors from it, notably about inability to bracket the root when invalid arguments are given.
 }
 \examples{
@@ -52,10 +52,8 @@ power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, n1 = 2000, t1 = 2, t2 = 2)
 # Calculate sample size, equal sizes
 power_Poisson(lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, t1 = 2, t2 = 2)
 # Calculate sample size for group 2, unequal sizes
-power_Poisson(
-  n1 = 2000, lambda1 = 0.0005, lambda2 = 0.003, power = 0.8,
-  t1 = 2, t2 = 2, equal.sample = FALSE
-)
+power_Poisson(n1 = 2000, lambda1 = 0.0005, lambda2 = 0.003, power = 0.8, 
+t1 = 2, t2 = 2, equal.sample = FALSE)
 }
 \references{
 Gu et al. (2008). Testing the ratio of two poisson rates. \emph{Biometrical Journal: Journal of Mathematical Methods in Biosciences}. \bold{50}:283-298.

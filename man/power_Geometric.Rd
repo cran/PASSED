@@ -4,23 +4,22 @@
 \alias{power_Geometric}
 \title{Power Calculation for Comparing Two Geometric Rates.}
 \usage{
-power_Geometric(n1 = NULL, n2 = NULL, mu1 = NULL, mu2 = NULL, 
-sig.level = 0.05, power = NULL, duration = 1,
-equal.sample = TRUE, alternative = c("two.sided", "one.sided"),
-approach = 3)
+power_Geometric(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
+mu1 = NULL, mu2 = NULL, duration = 1, equal.sample = TRUE, 
+alternative = c("two.sided", "one.sided"), approach = 3)
 }
 \arguments{
 \item{n1}{sample size in group 1, or sample size in each group if \code{equal.sample = TRUE}}
 
 \item{n2}{sample size in group 2}
 
-\item{mu1}{expected rate of events per time unit for group 1}
-
-\item{mu2}{expected rate of events per time unit for group 2}
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{sig.level}{significance level (Type I error probability)}
 
-\item{power}{power of test (1 minus Type II error probability)}
+\item{mu1}{expected rate of events per time unit for group 1}
+
+\item{mu2}{expected rate of events per time unit for group 2}
 
 \item{duration}{(average) treatment duration}
 
@@ -39,11 +38,7 @@ Compute sample size or power for comparing two geometric rates.
 \details{
 Exactly one of the parameters \code{n1}, \code{n2}, and \code{power} must be passed as NULL, and that parameter is determined from the others.\cr\cr
 If \code{equal.sample = TRUE} is used, N in output will denote the number in each group.\cr\cr
-Since the geometric distribution is a special case of negative binomial distribution, we used the algorithm for negative binomial distribution with setting theta = 1. 
-The computations are based on the formulas given in Zhu and Lakkis (2014). 
-For approach 1, the events rates under null hypothesis are set as mu1 for both group 1 and group 2.
-For approach 2, the events rates under null hypothesis are set as mu1 and mu2 for group 1 and group 2, respectively.
-For approach 3, the events rates under null hypothesis are set as the maximum likelihood estimation of the overall events rate for both group 1 and group 2.
+Since the geometric distribution is a special case of negative binomial distribution, we used the algorithm for negative binomial distribution with setting theta = 1. See \link[MKmisc]{power.nb.test} for more details.
 }
 \examples{
 # calculate power, equal sizes
@@ -51,5 +46,5 @@ power_Geometric(n1 = 100, mu1 = 0.3, mu2 = 0.6)
 # calculate power, unequal sizes
 power_Geometric(n1 = 180, n2 = 140, mu1 = 0.3, mu2 = 0.5)
 # calculate n
-power_Geometric(mu1 = 0.3, mu2 = 0.4, power = 0.8)
+power_Geometric( mu1 = 0.3, mu2 = 0.4, power = 0.8)
 }

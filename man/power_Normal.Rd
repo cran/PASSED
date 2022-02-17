@@ -4,8 +4,8 @@
 \alias{power_Normal}
 \title{Power Calculations for One and Two Sample T-tests}
 \usage{
-power_Normal(n1 = NULL, n2 = NULL, delta = NULL, sd1 = 1, sd2 = 1, 
-sig.level = 0.05, power = NULL, equal.sample = TRUE,
+power_Normal(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
+delta = NULL, sd1 = 1, sd2 = 1, equal.sample = TRUE,
 alternative = c("two.sided", "one.sided"),
 type = c("two.sample", "one.sample", "paired"),
 df.method = c("welch", "classical"), strict = FALSE)
@@ -15,15 +15,15 @@ df.method = c("welch", "classical"), strict = FALSE)
 
 \item{n2}{sample size in group 2}
 
+\item{power}{power of test (1 minus Type II error probability)}
+
+\item{sig.level}{significance level (Type I error probability)}
+
 \item{delta}{true difference in means}
 
 \item{sd1}{standard deviation for group 1}
 
 \item{sd2}{standard deviation for group 2}
-
-\item{sig.level}{significance level (Type I error probability)}
-
-\item{power}{power of test (1 minus Type II error probability)}
 
 \item{equal.sample}{equal sample sizes for two groups, see details}
 
@@ -47,7 +47,7 @@ Notice that \code{sd1}, \code{sd2}, \code{sig.level} have non-NULL defaults, so 
 If \code{equal.sample = TRUE} is used, N in output will denote the number in each group.\cr\cr
 }
 \note{
-'uniroot' is used to solve power equation for unknowns,
+'uniroot' is used to solve power equation for unknowns, 
 so you may see errors from it, notably about inability to bracket the root when invalid arguments are given.
 }
 \examples{
@@ -55,6 +55,6 @@ so you may see errors from it, notably about inability to bracket the root when 
 power_Normal(n1 = 150, delta = 5, sd1 = 20, sd2 = 10)
 # Calculate power, unequal sizes
 power_Normal(n1 = 150, delta = 5, n2 = 120, sd1 = 10)
-# Calculate n1, equal sizes
-power_Normal(delta = 5, power = 0.9, sd1 = 10, sd2 = 12)
+# Calculate n1, equal sizes 
+power_Normal(delta = 5,  power = 0.9, sd1 = 10, sd2 = 12)
 }

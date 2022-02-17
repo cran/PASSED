@@ -4,9 +4,9 @@
 \alias{power_Beta}
 \title{Power Calculations for Test of Two Beta Means}
 \usage{
-power_Beta(n1 = NULL, n2 = NULL,  mu1 = NULL, mu2 = NULL, 
-sd1 = NULL, sd2 = NULL, sig.level = 0.05, power = NULL, 
-equal.sample = TRUE, equal.precision = TRUE, trials = 100, 
+power_Beta(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05, 
+mu1 = NULL, sd1 = NULL, mu2 = NULL, equal.sample = TRUE,
+trials = 100, equal.precision = TRUE, sd2 = NULL, 
 link.type = c("logit", "probit", "cloglog", "cauchit", "log", "loglog"))
 }
 \arguments{
@@ -14,23 +14,23 @@ link.type = c("logit", "probit", "cloglog", "cauchit", "log", "loglog"))
 
 \item{n2}{sample size in group 2}
 
-\item{mu1}{mean of group 1}
-
-\item{mu2}{mean of group 2}
-
-\item{sd1}{standard deviation for group 1}
-
-\item{sd2}{standard deviation for group 2. Only applicable when \code{equal.precision = FALSE}}
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{sig.level}{significance level (Type I error probability)}
 
-\item{power}{power of test (1 minus Type II error probability)}
+\item{mu1}{sample mean of group 1}
+
+\item{sd1}{standard deviation for group 1}
+
+\item{mu2}{sample mean of group 2}
 
 \item{equal.sample}{equal sample sizes for two groups, see details}
 
+\item{trials}{number of trials in simulation}
+
 \item{equal.precision}{equal dispersion parameter assumption in simulation}
 
-\item{trials}{number of trials in simulation}
+\item{sd2}{standard deviation for group 2. Only applicable when \code{equal.precision = FALSE}}
 
 \item{link.type}{type of link used in the beta regression, see details}
 }
@@ -42,13 +42,12 @@ Compute the power for a test of two sample means with beta distributions, or det
 }
 \details{
 Exactly one of the parameters \code{n1}, \code{n2} and \code{power} must be passed as NULL, and that parameter is determined from the others.\cr\cr
-If equal.sample = TRUE is used, exactly one of the parameters \code{n1} and \code{power} must be passed as NULL, and N in output will denote the number in each group. \cr\cr
-This function allows you to set the number of trials in the simulation to control the result accuracy,
+This function allows you to set the number of trials in the simulation to control the result accuracy, 
 and type of link used in the beta regression. You can choose one of the following: "logit", "probit", "cloglog", "cauchit", "log", "loglog".
 }
 \examples{
 # calculate power
-power_Beta(n1 = 60, mu1 = 0.5, mu2 = 0.80, sd1 = 0.25)
+power_Beta(mu1 = 0.5, mu2 = 0.80, sd1 = 0.25, n1 = 60)
 # calculate sample size for both groups
-power_Beta(mu1 = 0.5, mu2 = 0.80, sd1 = 0.25, power = 0.8)
+power_Beta(mu1 = 0.5, mu2 = 0.80, sd1 = 0.25, power=0.8)
 }

@@ -4,22 +4,21 @@
 \alias{power_Binomial}
 \title{Power Calculations for Two-Sample Test for Proportions}
 \usage{
-power_Binomial(n1 = NULL, n2 = NULL, p1 = 0.5, p2 = 0.5, 
-sig.level = 0.05, power = NULL, equal.sample = TRUE,
-alternative = c("two.sided", "one.sided"))
+power_Binomial(n1 = NULL, n2 = NULL, power = NULL, sig.level = 0.05,
+p1 = 0.5, p2 = 0.5, equal.sample = TRUE, alternative = c("two.sided", "one.sided"))
 }
 \arguments{
 \item{n1}{sample size in group 1, or sample size in each group if equal.sample = TRUE}
 
 \item{n2}{sample size in group 2}
 
-\item{p1}{probability in group 1}
-
-\item{p2}{probability in group 2}
+\item{power}{power of test (1 minus Type II error probability)}
 
 \item{sig.level}{significance level (Type I error probability)}
 
-\item{power}{power of test (1 minus Type II error probability)}
+\item{p1}{probability in group 1}
+
+\item{p2}{probability in group 2}
 
 \item{equal.sample}{equal sample sizes for two groups, see details}
 
