@@ -1,7 +1,7 @@
 Package: PASSED
 Title: Calculate Power and Sample Size for Two Sample Mean Tests
-Version: 1.2-1
-Date: 2022-02-17
+Version: 1.2-2
+Date: 2023-10-12
 Authors@R: c(person("Jinpu", "Li", email = "lijinp@health.missouri.edu", role = c("aut", "cre")),
 	person("Ryan", "Knigge", email = "rknigge@health.missouri.edu", role = "aut"),
 	person("Emily", "Leary", email = "LearyE@health.missouri.edu", role = "aut"))
@@ -15,14 +15,15 @@ Description: Power calculations are a critical component of any research study t
 Depends: R (>= 4.0)
 License: GPL (>= 2)
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Imports: betareg, stats, rootSolve
+VignetteBuilder: knitr, rmarkdown
 Suggests: knitr, rmarkdown, MKmisc
 NeedsCompilation: no
-Packaged: 2022-02-17 21:54:07 UTC; Castle
+Packaged: 2023-10-16 01:29:11 UTC; Castle
 Author: Jinpu Li [aut, cre],
   Ryan Knigge [aut],
   Emily Leary [aut]
 Maintainer: Jinpu Li <lijinp@health.missouri.edu>
 Repository: CRAN
-Date/Publication: 2022-02-17 22:12:04 UTC
+Date/Publication: 2023-10-16 04:20:07 UTC

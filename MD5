@@ -1,4 +1,4 @@
-ecbf80ca77650be211a871ab989594a9 *DESCRIPTION
+35f07e28406aa90d7011b9c6408efd58 *DESCRIPTION
 3a16111f281adba9389e5f55eb324072 *NAMESPACE
 869434a7787f9d8118b0f57ff884cfbc *R/power_Beta.R
 8486cd5104f6ecde95743bdc4f7b8cd5 *R/power_Binomial.R
@@ -7,6 +7,10 @@ ecbf80ca77650be211a871ab989594a9 *DESCRIPTION
 baef1945472cbc91895e10e1165393a2 *R/power_NegativeBinomial.R
 f94f953b46eb4b4cac70609023fd6304 *R/power_Normal.R
 f156fa1b03058f356905668ffe981f25 *R/power_Poisson.R
+94a33b95732871d1a0eacfbf288c79d0 *build/vignette.rds
+03b9920f8d72f50d0506874018132206 *inst/doc/PASSED.R
+bd7fd825324977e1b9e98142d5c5aa11 *inst/doc/PASSED.Rmd
+329c3bc773a0dc7a84f5111c4ef60da0 *inst/doc/PASSED.html
 bd822370dce401460d7e9ea4579b1de8 *man/power_Beta.Rd
 6f9659c1a734837db30172fb6b7db97b *man/power_Binomial.Rd
 7d273b8cb3a6ff2c63f67b9e5a5d0a64 *man/power_Gamma.Rd
@@ -14,3 +18,4 @@ bd822370dce401460d7e9ea4579b1de8 *man/power_Beta.Rd
 95de0eb025ef38a6976983ad35f03b82 *man/power_NegativeBinomial.Rd
 52f3afb43f89bf5abbf623a348099263 *man/power_Normal.Rd
 255b179b6b2dc8ac7ac911382c87c818 *man/power_Poisson.Rd
+bd7fd825324977e1b9e98142d5c5aa11 *vignettes/PASSED.Rmd

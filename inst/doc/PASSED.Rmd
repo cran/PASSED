@@ -1,0 +1,208 @@
+---
+title: "Calculate Power and Sample Size with PASSED"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calculate Power and Sample Size with PASSED}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  knitr::opts_chunk$set(dev = 'pdf')
+)
+```
+
+# Introduction
+  
+Power and sample size estimation are critical aspects of study design, aimed at minimizing risks and allocating resources effectively. While R offers various packages for power analysis, they are often tailored to specific distributions and test types, lacking a comprehensive toolkit for power and sample size calculations across a wide range of distributions. In this vignette, we introduce the **PASSED** R package, which provides power and sample size analysis for seven different distributions: binomial, negative binomial, geometric, Poisson, normal, beta, and gamma.
+
+Each function within this package serves the purpose of calculating power for a particular study design (e.g., given sample sizes) or estimating specific parameter values (e.g., sample sizes) required to achieve a desired level of power. The choice of a specific function depends on the nature of the outcome variable and the underlying data distribution. All functions generate an object of class $power.htest$, which provides comprehensive information about the specified test parameters, including estimated parameter values (usually set as $NULL$).
+
+# Example: Calculating power and sample size for the data from beta distribution
+
+The **PASSED** package includes functions for power analysis with the data following beta distribution. In this example, we'll illustrate how to calculate sample sizes to detect a specific effect size in a hypothetical study.
+
+The Skilled Nursing Facility Quality Reporting Program (SNF-QRP) provider dataset comprises data regarding the prevalence of pressure ulcers in nursing homes throughout the United States. In this context, the study involves dividing the participating nursing homes into two groups. One group, known as the treatment group, will implement a new intervention protocol, while the other group will serve as the control and maintain their existing protocol. The primary aim is to investigate whether the new intervention effectively reduces the incidence of pressure ulcers. For this example, we are testing the following hypotheses:
+
+H0: There is no difference in pressure ulcer rates among nursing home facilities between control and treatment groups.
+Ha: There is a difference in pressure ulcer rates among nursing home facilities between control and treatment groups.
+
+## Sample Size Determination 
+
+In this example, we take into account the mean and standard deviation of a variable within the SNF-QRP dataset, specifically the "percentage of SNF residents with pressure ulcers that are new or worsened," for the control group. The control group's mean, denoted as $mu1$, is 0.0174, and its standard deviation ($sd1$) is 0.0211. Significantly, a 25$\%$ reduction in the proportion of patients experiencing new or worsening pressure ulcers is considered the desired effect size. This translates to an alternative mean ($mu2$) of 0.0131.
+
+To determine the required number of nursing facilities for both the control and treatment groups, we begin by using the $power\_Beta$ function. We aim to estimate the minimum sample size that ensures a power level of 0.8, making $power\_Beta$ the preferred choice due to the specific nature of this proportion and displays a right-skewed distribution.
+
+The analysis adopts the default $link.type$ setting, involves 1000 trials, and assumes equal precision in both control and treatment groups. It's worth noting that you can further fine-tune this analysis by adjusting the number of trials as needed. The following section provides the codes of this example:
+
+
+```{r}
+# Load the PASSED package
+library(PASSED)
+
+# Set a random seed for reproducibility
+set.seed(1)
+
+# Input data for control group
+mu1 = 0.0174  # Mean
+sd1 = 0.0211  # Standard Deviation
+
+# Target alternative mean (or the mean for treatment group) (25% reduction)
+mu2 = 0.0131
+
+# Calculate sample size
+result <- power_Beta(mu1 = mu1, sd1 = sd1, mu2 = mu2, power = 0.80, link.type = "logit", trials = 100, equal.precision = TRUE)
+
+# Print the result
+print(result)
+```
+
+The result of this analysis reveals that a total of 332 nursing home facilities are required, with 166 facilities assigned to each group. This sample size is necessary to effectively detect variations in pressure ulcer rates between the control and treatment groups, all while maintaining a significance level of 0.05 and achieving a power of 0.80. Again, we would recommend using a large number of trials (e.g., 10000) for a precise estimation.
+
+## Comparison with T-Test
+
+To further explore the optimal sample sizes for both the control and treatment groups, we proceed by examining a range of target means, specifically ranging from 0.0120 to 0.0140. This range encapsulates the desired alternative mean of 0.0131. The expectation is to attain sample sizes exceeding 100 nursing homes in each group. In addition to this analysis, we perform a comparative assessment by calculating the statistical power using a two-sided t-test in the same scenario. This is achieved by utilizing the $power\_Normal$ function.
+
+In this context, we establish the true difference in means, labeled as $delta$, as the dissimilarity between $mu1$ and $mu2$. Furthermore, for this comparison, we assume that the alternative standard deviation is equal to $sd1$. The codes and results are presented below, assuming equal precision:
+
+```{r}
+# Set seed for the simulation below
+set.seed(1)
+
+Ex1 <- mapply(
+  function(mu2, sample_size){
+    Betapower <- power_Beta(mu1 = 0.0174, sd1 = 0.0211,
+                            mu2 = mu2, n1 = sample_size,
+                            link.type = "logit", trials = 100,
+                            equal.precision = TRUE)
+    Normalpower <- power_Normal(delta = (0.0174 - mu2), n1 = sample_size,
+                                sd1 = 0.0211, sd2 = 0.0211)
+    return(c(Betapower$power,
+             round(Normalpower$power,3),
+             sample_size,
+             mu2,
+             0.0174))
+  },
+  # Range of mu2 was set as [0.0120, 0.0140] by 0.0010
+  rep(seq(0.0120, 0.0140, 0.0010), 5),
+  # Range of sample size was set as [100, 200] by 25
+  rep(seq(100, 200, 25), rep(3, 5))
+)
+
+# Reform the output
+Ex1 <- as.data.frame(t(Ex1))
+# Set column names
+colnames(Ex1) <- c("Power (Beta)",
+                   "Power (Normal)",
+                   "Sample Size",
+                   "mu2",
+                   "mu1")
+# Display the results
+print(Ex1)
+
+```
+
+
+In situations where it's not valid to assume equal precision, the parameter $equal.precision$ is explicitly set to $FALSE$. In such cases, it becomes necessary to specify a value for $sd2$. To illustrate the scenario involving unequal precision, we revisit the previous example with the configuration of $equal.precision$ set to $FALSE$ and $sd2$ assigned a value of 0.03. The subsequent results are outlined below:
+
+```{r}
+# Set seed for the simulation below
+set.seed(1)
+# Set the simulations
+Ex2 <- mapply(
+  function(mu2, sample_size){
+    Betapower <- power_Beta(mu1 = 0.0174, sd1 = 0.0211, sd2 = 0.030,
+                            mu2 = mu2, n1 = sample_size,
+                            link.type = "logit", trials = 100,
+                            equal.precision = FALSE)
+    Normalpower <- power_Normal(delta = (0.0174 - mu2), n1 = sample_size,
+                                sd1 = 0.0211, sd2 = 0.030)
+    return(c(Betapower$power,
+             round(Normalpower$power,3),
+             sample_size,
+             mu2,
+             0.0174))
+  },
+  # Range of mu2 was set as [0.0120, 0.0140] by 0.0010
+  rep(seq(0.0120, 0.0140, 0.0010), 5),
+  # Range of sample size was set as [100, 200] by 25
+  rep(seq(100, 200, 25), rep(3, 5))
+)
+# Reform the output
+Ex2 <- as.data.frame(t(Ex2))
+# Set column names
+colnames(Ex2) <- c("Power (Beta)",
+                   "Power (Normal)",
+                   "Sample Size",
+                   "mu2",
+                   "mu1")
+# Display the results
+print(Ex2)
+
+```
+
+
+The findings reveal slight disparities in the power of a two-sided t-test when comparing scenarios with equal and unequal standard deviations. However, it's noteworthy that the power derived from the $power\_Beta$ function undergoes significant fluctuations when the equal precision assumption is abandoned. Notably, unlike random variables following a normal distribution, the beta distribution demonstrates a heightened sensitivity to assumptions related to equal precision parameters.
+
+To visually illustrate this sensitivity, a figure presents a side-by-side comparison of probability density functions for random variables following a beta distribution under two conditions: with and without the equal precision assumption. Additionally, the figure provides a similar comparison for normally distributed variables under the circumstances of equal and unequal standard deviations.
+
+
+```{r, out.width="100%", fig.width=7, fig.height=6}
+
+## Parameter settings
+mu1 <- 0.0174
+mu2 <- 0.0131
+sd1 <- 0.0211
+sd2 <- 0.0300
+phi<- ((mu1*(1-mu1))/(sd1*sd1))-1
+a0 <- mu1*phi
+b0 <- (1-mu1)*phi
+a1 <- mu2*phi
+b1 <- (1-mu2)*phi
+
+## Draw lines
+Ex1_eq_p_1 <- sapply(seq(0.001,0.100,0.001), function(i) return(dbeta(i,a0, b0)))
+plot(seq(0.001,0.100,0.001), Ex1_eq_p_1, xlab="percentage of SNF residents with pressure ulcers", ylab="density", type ="l", xlim = c(-0.001, 0.10), main = "equal precision/standard deviation", col="darkgreen", lwd=3,lty = 1)
+Ex1_eq_p_2 <- sapply(seq(0.001,0.100,0.001), function(i) return(dbeta(i,a1, b1)))
+lines(seq(0.001,0.100,0.001), Ex1_eq_p_2, col="darkgreen", lwd=3,lty=2)
+Ex1_nm_p_1 <- sapply(seq(-0.00,0.100,0.001), function(i) return(dnorm(i,mu1, sd1)))
+lines(seq(-0.00,0.100,0.001), Ex1_nm_p_1, col="darkred", lwd=3)
+Ex1_nm_p_2 <- sapply(seq(-0.00,0.100,0.001), function(i) return(dnorm(i,mu2, sd1)))
+lines(seq(-0.00,0.100,0.001), Ex1_nm_p_2, col="darkred", lwd=3,lty=2)
+# Shading area
+polygon(c(seq(0.001,0.100,0.001),rev(seq(0.001,0.100,0.001))),c(Ex1_eq_p_2,rev(Ex1_eq_p_1)),col=rgb(0, 1, 0,0.5), border = NA)
+polygon(c(seq(-0.00,0.100,0.001),rev(seq(-0.00,0.100,0.001))),c(Ex1_nm_p_1,rev(Ex1_nm_p_2)),col=rgb(1, 0, 0,0.5), border = NA)
+# Add legend
+legend(0.050,80, c("Beta (control)","Beta (alternative)","Normal (control)", "Normal (alternative)"),lty=c(1,2,1,3),col=c("darkgreen","darkgreen","darkred","darkred"),lwd=c(3,3,3,3))
+
+## Parameter settings
+phi<- ((mu1*(1-mu1))/(sd1*sd1))-1
+phi1 <- ((mu2*(1-mu2))/(sd2*sd2))-1
+a0 <- mu1*phi
+b0 <- (1-mu1)*phi
+a1 <- mu2*phi1
+b1 <- (1-mu2)*phi1
+
+## Draw lines
+Ex1_ne_p_1 <- sapply(seq(0.001,0.100,0.001), function(i) return(dbeta(i,a0, b0)))
+plot(seq(0.001,0.100,0.001), Ex1_ne_p_1, xlab="percentage of SNF residents with pressure ulcers", ylab="density", type ="l",  xlim = c(-0.001, 0.10), main = "unequal precision/standard deviation", col="darkgreen", lwd=3,lty = 1)
+Ex1_ne_p_2 <- sapply(seq(0.001,0.100,0.001), function(i) return(dbeta(i,a1, b1)))
+lines(seq(0.001,0.100,0.001), Ex1_ne_p_2, col="darkgreen", lwd=3,lty=2)
+Ex1_nm_p_1 <- sapply(seq(-0.00,0.100,0.001), function(i) return(dnorm(i,mu1, sd1)))
+lines(seq(-0.00,0.100,0.001), Ex1_nm_p_1, col="darkred", lwd=3)
+Ex1_nm_p_2 <- sapply(seq(-0.00,0.100,0.001), function(i) return(dnorm(i,mu2, sd2)))
+lines(seq(-0.00,0.100,0.001), Ex1_nm_p_2, col="darkred", lwd=3,lty=2)
+# Shading area
+polygon(c(seq(0.001,0.100,0.001),rev(seq(0.001,0.100,0.001))),c(Ex1_ne_p_2,rev(Ex1_ne_p_1)),col=rgb(0, 1, 0,0.5), border = NA)
+polygon(c(seq(-0.00,0.100,0.001),rev(seq(-0.00,0.100,0.001))),c(Ex1_nm_p_1,rev(Ex1_nm_p_2)),col=rgb(1, 0, 0,0.5), border = NA)
+# Add legend
+legend(0.050,80, c("Beta (control)","Beta (alternative)","Normal (control)", "Normal (alternative)"),lty=c(1,2,1,3),col=c("darkgreen","darkgreen","darkred","darkred"),lwd=c(3,3,3,3))
+
+
+
+```
+

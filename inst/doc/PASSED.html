@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2023-10-15" />
+
+<title>Calculate Power and Sample Size with PASSED</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Calculate Power and Sample Size with
+PASSED</h1>
+<h4 class="date">2023-10-15</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Power and sample size estimation are critical aspects of study
+design, aimed at minimizing risks and allocating resources effectively.
+While R offers various packages for power analysis, they are often
+tailored to specific distributions and test types, lacking a
+comprehensive toolkit for power and sample size calculations across a
+wide range of distributions. In this vignette, we introduce the
+<strong>PASSED</strong> R package, which provides power and sample size
+analysis for seven different distributions: binomial, negative binomial,
+geometric, Poisson, normal, beta, and gamma.</p>
+<p>Each function within this package serves the purpose of calculating
+power for a particular study design (e.g., given sample sizes) or
+estimating specific parameter values (e.g., sample sizes) required to
+achieve a desired level of power. The choice of a specific function
+depends on the nature of the outcome variable and the underlying data
+distribution. All functions generate an object of class <span class="math inline">\(power.htest\)</span>, which provides comprehensive
+information about the specified test parameters, including estimated
+parameter values (usually set as <span class="math inline">\(NULL\)</span>).</p>
+</div>
+<div id="example-calculating-power-and-sample-size-for-the-data-from-beta-distribution" class="section level1">
+<h1>Example: Calculating power and sample size for the data from beta
+distribution</h1>
+<p>The <strong>PASSED</strong> package includes functions for power
+analysis with the data following beta distribution. In this example,
+we’ll illustrate how to calculate sample sizes to detect a specific
+effect size in a hypothetical study.</p>
+<p>The Skilled Nursing Facility Quality Reporting Program (SNF-QRP)
+provider dataset comprises data regarding the prevalence of pressure
+ulcers in nursing homes throughout the United States. In this context,
+the study involves dividing the participating nursing homes into two
+groups. One group, known as the treatment group, will implement a new
+intervention protocol, while the other group will serve as the control
+and maintain their existing protocol. The primary aim is to investigate
+whether the new intervention effectively reduces the incidence of
+pressure ulcers. For this example, we are testing the following
+hypotheses:</p>
+<p>H0: There is no difference in pressure ulcer rates among nursing home
+facilities between control and treatment groups. Ha: There is a
+difference in pressure ulcer rates among nursing home facilities between
+control and treatment groups.</p>
+<div id="sample-size-determination" class="section level2">
+<h2>Sample Size Determination</h2>
+<p>In this example, we take into account the mean and standard deviation
+of a variable within the SNF-QRP dataset, specifically the “percentage
+of SNF residents with pressure ulcers that are new or worsened,” for the
+control group. The control group’s mean, denoted as <span class="math inline">\(mu1\)</span>, is 0.0174, and its standard
+deviation (<span class="math inline">\(sd1\)</span>) is 0.0211.
+Significantly, a 25<span class="math inline">\(\%\)</span> reduction in
+the proportion of patients experiencing new or worsening pressure ulcers
+is considered the desired effect size. This translates to an alternative
+mean (<span class="math inline">\(mu2\)</span>) of 0.0131.</p>
+<p>To determine the required number of nursing facilities for both the
+control and treatment groups, we begin by using the <span class="math inline">\(power\_Beta\)</span> function. We aim to estimate
+the minimum sample size that ensures a power level of 0.8, making <span class="math inline">\(power\_Beta\)</span> the preferred choice due to
+the specific nature of this proportion and displays a right-skewed
+distribution.</p>
+<p>The analysis adopts the default <span class="math inline">\(link.type\)</span> setting, involves 1000 trials,
+and assumes equal precision in both control and treatment groups. It’s
+worth noting that you can further fine-tune this analysis by adjusting
+the number of trials as needed. The following section provides the codes
+of this example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the PASSED package</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PASSED)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a random seed for reproducibility</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Input data for control group</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">=</span> <span class="fl">0.0174</span>  <span class="co"># Mean</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">=</span> <span class="fl">0.0211</span>  <span class="co"># Standard Deviation</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Target alternative mean (or the mean for treatment group) (25% reduction)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mu2 <span class="ot">=</span> <span class="fl">0.0131</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate sample size</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">power_Beta</span>(<span class="at">mu1 =</span> mu1, <span class="at">sd1 =</span> sd1, <span class="at">mu2 =</span> mu2, <span class="at">power =</span> <span class="fl">0.80</span>, <span class="at">link.type =</span> <span class="st">&quot;logit&quot;</span>, <span class="at">trials =</span> <span class="dv">100</span>, <span class="at">equal.precision =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Two-sample Beta Means Tests (Equal Sizes) (logit link, equal precision) </span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               N = 166</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             mu1 = 0.0174</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             mu2 = 0.0131</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             sd1 = 0.0211</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       sig.level = 0.05</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           power = 0.82</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span><span class="al">NOTE</span><span class="co">: N is number in *each* group</span></span></code></pre></div>
+<p>The result of this analysis reveals that a total of 332 nursing home
+facilities are required, with 166 facilities assigned to each group.
+This sample size is necessary to effectively detect variations in
+pressure ulcer rates between the control and treatment groups, all while
+maintaining a significance level of 0.05 and achieving a power of 0.80.
+Again, we would recommend using a large number of trials (e.g., 10000)
+for a precise estimation.</p>
+</div>
+<div id="comparison-with-t-test" class="section level2">
+<h2>Comparison with T-Test</h2>
+<p>To further explore the optimal sample sizes for both the control and
+treatment groups, we proceed by examining a range of target means,
+specifically ranging from 0.0120 to 0.0140. This range encapsulates the
+desired alternative mean of 0.0131. The expectation is to attain sample
+sizes exceeding 100 nursing homes in each group. In addition to this
+analysis, we perform a comparative assessment by calculating the
+statistical power using a two-sided t-test in the same scenario. This is
+achieved by utilizing the <span class="math inline">\(power\_Normal\)</span> function.</p>
+<p>In this context, we establish the true difference in means, labeled
+as <span class="math inline">\(delta\)</span>, as the dissimilarity
+between <span class="math inline">\(mu1\)</span> and <span class="math inline">\(mu2\)</span>. Furthermore, for this comparison, we
+assume that the alternative standard deviation is equal to <span class="math inline">\(sd1\)</span>. The codes and results are presented
+below, assuming equal precision:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for the simulation below</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Ex1 <span class="ot">&lt;-</span> <span class="fu">mapply</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(mu2, sample_size){</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    Betapower <span class="ot">&lt;-</span> <span class="fu">power_Beta</span>(<span class="at">mu1 =</span> <span class="fl">0.0174</span>, <span class="at">sd1 =</span> <span class="fl">0.0211</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">mu2 =</span> mu2, <span class="at">n1 =</span> sample_size,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">link.type =</span> <span class="st">&quot;logit&quot;</span>, <span class="at">trials =</span> <span class="dv">100</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">equal.precision =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    Normalpower <span class="ot">&lt;-</span> <span class="fu">power_Normal</span>(<span class="at">delta =</span> (<span class="fl">0.0174</span> <span class="sc">-</span> mu2), <span class="at">n1 =</span> sample_size,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sd1 =</span> <span class="fl">0.0211</span>, <span class="at">sd2 =</span> <span class="fl">0.0211</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(Betapower<span class="sc">$</span>power,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">round</span>(Normalpower<span class="sc">$</span>power,<span class="dv">3</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>             sample_size,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>             mu2,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>             <span class="fl">0.0174</span>))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Range of mu2 was set as [0.0120, 0.0140] by 0.0010</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">0.0120</span>, <span class="fl">0.0140</span>, <span class="fl">0.0010</span>), <span class="dv">5</span>),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Range of sample size was set as [100, 200] by 25</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">25</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Reform the output</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>Ex1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(Ex1))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Set column names</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Ex1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Power (Beta)&quot;</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Power (Normal)&quot;</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Sample Size&quot;</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;mu2&quot;</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;mu1&quot;</span>)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the results</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Ex1)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Power (Beta) Power (Normal) Sample Size   mu2    mu1</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          0.86          0.437         100 0.012 0.0174</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          0.58          0.311         100 0.013 0.0174</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          0.42          0.204         100 0.014 0.0174</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          0.93          0.522         125 0.012 0.0174</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          0.77          0.375         125 0.013 0.0174</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          0.53          0.245         125 0.014 0.0174</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          0.96          0.598         150 0.012 0.0174</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8          0.66          0.436         150 0.013 0.0174</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9          0.65          0.285         150 0.014 0.0174</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10         1.00          0.665         175 0.012 0.0174</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11         0.87          0.494         175 0.013 0.0174</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12         0.71          0.324         175 0.014 0.0174</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13         1.00          0.723         200 0.012 0.0174</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14         0.96          0.548         200 0.013 0.0174</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15         0.72          0.362         200 0.014 0.0174</span></span></code></pre></div>
+<p>In situations where it’s not valid to assume equal precision, the
+parameter <span class="math inline">\(equal.precision\)</span> is
+explicitly set to <span class="math inline">\(FALSE\)</span>. In such
+cases, it becomes necessary to specify a value for <span class="math inline">\(sd2\)</span>. To illustrate the scenario involving
+unequal precision, we revisit the previous example with the
+configuration of <span class="math inline">\(equal.precision\)</span>
+set to <span class="math inline">\(FALSE\)</span> and <span class="math inline">\(sd2\)</span> assigned a value of 0.03. The
+subsequent results are outlined below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for the simulation below</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the simulations</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Ex2 <span class="ot">&lt;-</span> <span class="fu">mapply</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(mu2, sample_size){</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    Betapower <span class="ot">&lt;-</span> <span class="fu">power_Beta</span>(<span class="at">mu1 =</span> <span class="fl">0.0174</span>, <span class="at">sd1 =</span> <span class="fl">0.0211</span>, <span class="at">sd2 =</span> <span class="fl">0.030</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">mu2 =</span> mu2, <span class="at">n1 =</span> sample_size,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">link.type =</span> <span class="st">&quot;logit&quot;</span>, <span class="at">trials =</span> <span class="dv">100</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">equal.precision =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    Normalpower <span class="ot">&lt;-</span> <span class="fu">power_Normal</span>(<span class="at">delta =</span> (<span class="fl">0.0174</span> <span class="sc">-</span> mu2), <span class="at">n1 =</span> sample_size,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sd1 =</span> <span class="fl">0.0211</span>, <span class="at">sd2 =</span> <span class="fl">0.030</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(Betapower<span class="sc">$</span>power,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">round</span>(Normalpower<span class="sc">$</span>power,<span class="dv">3</span>),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>             sample_size,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>             mu2,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>             <span class="fl">0.0174</span>))</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Range of mu2 was set as [0.0120, 0.0140] by 0.0010</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">0.0120</span>, <span class="fl">0.0140</span>, <span class="fl">0.0010</span>), <span class="dv">5</span>),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Range of sample size was set as [100, 200] by 25</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">25</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Reform the output</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>Ex2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(Ex2))</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Set column names</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Ex2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Power (Beta)&quot;</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Power (Normal)&quot;</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Sample Size&quot;</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;mu2&quot;</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;mu1&quot;</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the results</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Ex2)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Power (Beta) Power (Normal) Sample Size   mu2    mu1</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          0.99          0.310         100 0.012 0.0174</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          0.91          0.222         100 0.013 0.0174</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          0.87          0.150         100 0.014 0.0174</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          1.00          0.374         125 0.012 0.0174</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          0.99          0.266         125 0.013 0.0174</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          0.92          0.177         125 0.014 0.0174</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          1.00          0.435         150 0.012 0.0174</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8          1.00          0.310         150 0.013 0.0174</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9          0.99          0.204         150 0.014 0.0174</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10         1.00          0.493         175 0.012 0.0174</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11         1.00          0.353         175 0.013 0.0174</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12         1.00          0.230         175 0.014 0.0174</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13         1.00          0.546         200 0.012 0.0174</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14         1.00          0.394         200 0.013 0.0174</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15         1.00          0.257         200 0.014 0.0174</span></span></code></pre></div>
+<p>The findings reveal slight disparities in the power of a two-sided
+t-test when comparing scenarios with equal and unequal standard
+deviations. However, it’s noteworthy that the power derived from the
+<span class="math inline">\(power\_Beta\)</span> function undergoes
+significant fluctuations when the equal precision assumption is
+abandoned. Notably, unlike random variables following a normal
+distribution, the beta distribution demonstrates a heightened
+sensitivity to assumptions related to equal precision parameters.</p>
+<p>To visually illustrate this sensitivity, a figure presents a
+side-by-side comparison of probability density functions for random
+variables following a beta distribution under two conditions: with and
+without the equal precision assumption. Additionally, the figure
+provides a similar comparison for normally distributed variables under
+the circumstances of equal and unequal standard deviations.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Parameter settings</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="fl">0.0174</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mu2 <span class="ot">&lt;-</span> <span class="fl">0.0131</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">&lt;-</span> <span class="fl">0.0211</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sd2 <span class="ot">&lt;-</span> <span class="fl">0.0300</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>phi<span class="ot">&lt;-</span> ((mu1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>mu1))<span class="sc">/</span>(sd1<span class="sc">*</span>sd1))<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>a0 <span class="ot">&lt;-</span> mu1<span class="sc">*</span>phi</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">-</span>mu1)<span class="sc">*</span>phi</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> mu2<span class="sc">*</span>phi</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">-</span>mu2)<span class="sc">*</span>phi</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Draw lines</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Ex1_eq_p_1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dbeta</span>(i,a0, b0)))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_eq_p_1, <span class="at">xlab=</span><span class="st">&quot;percentage of SNF residents with pressure ulcers&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>, <span class="at">type =</span><span class="st">&quot;l&quot;</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.001</span>, <span class="fl">0.10</span>), <span class="at">main =</span> <span class="st">&quot;equal precision/standard deviation&quot;</span>, <span class="at">col=</span><span class="st">&quot;darkgreen&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>Ex1_eq_p_2 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dbeta</span>(i,a1, b1)))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_eq_p_2, <span class="at">col=</span><span class="st">&quot;darkgreen&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>Ex1_nm_p_1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dnorm</span>(i,mu1, sd1)))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_nm_p_1, <span class="at">col=</span><span class="st">&quot;darkred&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>Ex1_nm_p_2 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dnorm</span>(i,mu2, sd1)))</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_nm_p_2, <span class="at">col=</span><span class="st">&quot;darkred&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Shading area</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>),<span class="fu">rev</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>))),<span class="fu">c</span>(Ex1_eq_p_2,<span class="fu">rev</span>(Ex1_eq_p_1)),<span class="at">col=</span><span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>,<span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>),<span class="fu">rev</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>))),<span class="fu">c</span>(Ex1_nm_p_1,<span class="fu">rev</span>(Ex1_nm_p_2)),<span class="at">col=</span><span class="fu">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>,<span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Add legend</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="fl">0.050</span>,<span class="dv">80</span>, <span class="fu">c</span>(<span class="st">&quot;Beta (control)&quot;</span>,<span class="st">&quot;Beta (alternative)&quot;</span>,<span class="st">&quot;Normal (control)&quot;</span>, <span class="st">&quot;Normal (alternative)&quot;</span>),<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;darkred&quot;</span>,<span class="st">&quot;darkred&quot;</span>),<span class="at">lwd=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div>
+<embed src="data:application/pdf;base64,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IDAgb2JqCjw8Ci9UeXBlIC9FeHRHU3RhdGUKL0NBIDEuMDAwID4+CmVuZG9iagoxMyAwIG9iago8PAovVHlwZSAvRXh0R1N0YXRlCi9jYSAwLjUwMgo+PgplbmRvYmoKMTQgMCBvYmoKPDwKL1R5cGUgL0V4dEdTdGF0ZQovY2EgMS4wMDAKPj4KZW5kb2JqCnhyZWYKMCAxNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMjEgMDAwMDAgbiAKMDAwMDAwMDE2MyAwMDAwMCBuIAowMDAwMDAzOTMxIDAwMDAwIG4gCjAwMDAwMDQwMTQgMDAwMDAgbiAKMDAwMDAwNDE3NyAwMDAwMCBuIAowMDAwMDA0MjEwIDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDI5MiAwMDAwMCBuIAowMDAwMDA2OTA1IDAwMDAwIG4gCjAwMDAwMDY5OTkgMDAwMDAgbiAKMDAwMDAwNzA5NiAwMDAwMCBuIAowMDAwMDA3MTk4IDAwMDAwIG4gCjAwMDAwMDcyNDcgMDAwMDAgbiAKMDAwMDAwNzI5NiAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDE1IC9JbmZvIDEgMCBSIC9Sb290IDIgMCBSID4+CnN0YXJ0eHJlZgo3MzQ1CiUlRU9GCg==" width="100%" type="application/pdf"></embed>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Parameter settings</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>phi<span class="ot">&lt;-</span> ((mu1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>mu1))<span class="sc">/</span>(sd1<span class="sc">*</span>sd1))<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>phi1 <span class="ot">&lt;-</span> ((mu2<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>mu2))<span class="sc">/</span>(sd2<span class="sc">*</span>sd2))<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>a0 <span class="ot">&lt;-</span> mu1<span class="sc">*</span>phi</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">-</span>mu1)<span class="sc">*</span>phi</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> mu2<span class="sc">*</span>phi1</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">-</span>mu2)<span class="sc">*</span>phi1</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Draw lines</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>Ex1_ne_p_1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dbeta</span>(i,a0, b0)))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_ne_p_1, <span class="at">xlab=</span><span class="st">&quot;percentage of SNF residents with pressure ulcers&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>, <span class="at">type =</span><span class="st">&quot;l&quot;</span>,  <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.001</span>, <span class="fl">0.10</span>), <span class="at">main =</span> <span class="st">&quot;unequal precision/standard deviation&quot;</span>, <span class="at">col=</span><span class="st">&quot;darkgreen&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Ex1_ne_p_2 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dbeta</span>(i,a1, b1)))</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_ne_p_2, <span class="at">col=</span><span class="st">&quot;darkgreen&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>Ex1_nm_p_1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dnorm</span>(i,mu1, sd1)))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_nm_p_1, <span class="at">col=</span><span class="st">&quot;darkred&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>Ex1_nm_p_2 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), <span class="cf">function</span>(i) <span class="fu">return</span>(<span class="fu">dnorm</span>(i,mu2, sd2)))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>), Ex1_nm_p_2, <span class="at">col=</span><span class="st">&quot;darkred&quot;</span>, <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Shading area</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>),<span class="fu">rev</span>(<span class="fu">seq</span>(<span class="fl">0.001</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>))),<span class="fu">c</span>(Ex1_ne_p_2,<span class="fu">rev</span>(Ex1_ne_p_1)),<span class="at">col=</span><span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>,<span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>),<span class="fu">rev</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.00</span>,<span class="fl">0.100</span>,<span class="fl">0.001</span>))),<span class="fu">c</span>(Ex1_nm_p_1,<span class="fu">rev</span>(Ex1_nm_p_2)),<span class="at">col=</span><span class="fu">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>,<span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Add legend</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="fl">0.050</span>,<span class="dv">80</span>, <span class="fu">c</span>(<span class="st">&quot;Beta (control)&quot;</span>,<span class="st">&quot;Beta (alternative)&quot;</span>,<span class="st">&quot;Normal (control)&quot;</span>, <span class="st">&quot;Normal (alternative)&quot;</span>),<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;darkred&quot;</span>,<span class="st">&quot;darkred&quot;</span>),<span class="at">lwd=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code></pre></div>
+<embed src="data:application/pdf;base64,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ZXRpY2EtQm9sZAovRW5jb2RpbmcgOSAwIFIgPj4KZW5kb2JqCjEyIDAgb2JqCjw8Ci9UeXBlIC9FeHRHU3RhdGUKL0NBIDEuMDAwID4+CmVuZG9iagoxMyAwIG9iago8PAovVHlwZSAvRXh0R1N0YXRlCi9jYSAwLjUwMgo+PgplbmRvYmoKMTQgMCBvYmoKPDwKL1R5cGUgL0V4dEdTdGF0ZQovY2EgMS4wMDAKPj4KZW5kb2JqCnhyZWYKMCAxNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMjEgMDAwMDAgbiAKMDAwMDAwMDE2MyAwMDAwMCBuIAowMDAwMDAzOTcwIDAwMDAwIG4gCjAwMDAwMDQwNTMgMDAwMDAgbiAKMDAwMDAwNDIxNiAwMDAwMCBuIAowMDAwMDA0MjQ5IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDI5MiAwMDAwMCBuIAowMDAwMDA2OTQ0IDAwMDAwIG4gCjAwMDAwMDcwMzggMDAwMDAgbiAKMDAwMDAwNzEzNSAwMDAwMCBuIAowMDAwMDA3MjM3IDAwMDAwIG4gCjAwMDAwMDcyODYgMDAwMDAgbiAKMDAwMDAwNzMzNSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDE1IC9JbmZvIDEgMCBSIC9Sb290IDIgMCBSID4+CnN0YXJ0eHJlZgo3Mzg0CiUlRU9GCg==" width="100%" type="application/pdf"></embed>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
